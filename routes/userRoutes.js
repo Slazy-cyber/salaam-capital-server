@@ -18,7 +18,7 @@ const upload = multer({ storage });
 
 router.get("/me", auth, async (req, res) => {
     const user = await User.findById(req.user).select("-password");
-    res.json(user);
+        res.json(user);
 });
 
 
