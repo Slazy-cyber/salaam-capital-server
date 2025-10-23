@@ -8,23 +8,21 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json()); // Parse JSON request bodies
+app.use(express.json());
+app.use("/uploads", express.static("uploads")); // Serve uploaded images
 
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected successfully"))
+  .then(() => console.log("✅ MongoDB connected successfully"))
   .catch((err) => {
-    console.error("MongoDB connection error:", err);
-    process.exit(1); // Exit process if connection fails
+    console.error("❌ MongoDB connection error:", err);
+    process.exit(1);
   });
 
-// Routes
-app.use("/api/auth", require("./routes/authRoutes"));
-app.use("/api/user", require("./routes/userRoutes"));
-app.use("/api/transactions", require("./routes/transactionRoutes"));
-app.use("/uploads", express.static("uploads"));
+// Unified Routes (all in one)
+app.use("/api", require("./routes/userRoute")); // ✅ Only one routes file now
 
 // Start Server
-const PORT = process.env.PORT;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
