@@ -9,19 +9,6 @@ const auth = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// ============================
-// 💰 TRANSACTION ROUTES
-// ============================
-
-router.get("/transactions", auth, async (req, res) => {
-  try {
-    const transactions = await Transaction.find({ user: req.user.id });
-    res.json(transactions);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Server error" });
-  }
-});
 
 // ============================
 // 📦 AUTH ROUTES (Signup + Login)
