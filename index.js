@@ -21,7 +21,11 @@ mongoose
   });
 
 // Unified Routes (all in one)
-app.use("/api", require("./routes/userRoute")); // ✅ Only one routes file now
+// Mount user routes under both /api and /api/users so older frontend paths
+// like /api/login or /api/me continue to work while newer paths
+// like /api/users/me also resolve.
+app.use("/api", require("./routes/userRoute"));
+app.use("/api/users", require("./routes/userRoute")); // ✅ Only one routes file now
 
 // Start Server
 const PORT = process.env.PORT || 5000;
