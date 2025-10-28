@@ -136,8 +136,8 @@ router.post("/upload", auth, upload.single("profilePic"), async (req, res) => {
     if (!req.file) return res.status(400).json({ msg: "No file uploaded" });
 
     const user = await User.findById(req.user);
-    user.profilePic = req.file.path;
-    await user.save();
+  user.profilePic = `uploads/${req.file.filename}`;
+await user.save();
 
     res.json({ msg: "Profile picture updated", path: req.file.path });
   } catch (err) {
@@ -190,28 +190,38 @@ router.post("/transfer", auth, async (req, res) => {
 
 router.post("/airtime", auth, async (req, res) => {
   try {
-    const { amount, network } = req.body;
+    const { amount, network, phone } = req.body; // ✅ include phone
+
     const user = await User.findById(req.user);
+    if (!user) return res.status(404).json({ msg: "User not found" });
 
     if (user.balance < amount)
       return res.status(400).json({ msg: "Insufficient balance" });
 
+    // Deduct balance
     user.balance -= amount;
     await user.save();
 
+    // Record the transaction
     await Transaction.create({
       userId: user._id,
-      type: "airtime",
+      type: "Airtime",
       amount,
-      description: `Airtime purchase (${network})`,
+      network,
+      phone,
+      description: `₦${amount} airtime to ${phone} on ${network}`,
+      status: "Success",
+      date: new Date(),
     });
 
+    // Respond success
     res.json({ msg: "Airtime purchased successfully" });
   } catch (err) {
     console.error("Airtime error:", err);
     res.status(500).json({ msg: "Server error" });
   }
 });
+
 
 
 router.get("/history", auth, async (req, res) => {

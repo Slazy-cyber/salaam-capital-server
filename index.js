@@ -24,6 +24,7 @@ mongoose
 // Mount user routes under both /api and /api/users so older frontend paths
 // like /api/login or /api/me continue to work while newer paths
 // like /api/users/me also resolve.
+app.use("/uploads", express.static("uploads"));
 app.use("/api", require("./routes/userRoute"));
 app.use("/api/users", require("./routes/userRoute")); // ✅ Only one routes file now
 
